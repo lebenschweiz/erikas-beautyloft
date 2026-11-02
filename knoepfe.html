@@ -1,0 +1,41 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Knopf-Varianten</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e4dcd6;font-family:Montserrat,sans-serif;color:#4f4538;padding:30px 50px;max-width:1000px}
+@media(max-width:700px){body{padding:20px 16px}.row{flex-wrap:wrap;gap:14px}.lbl{width:100%}}
+.row{display:flex;align-items:center;gap:26px;padding:26px 0;border-bottom:1px solid rgba(187,133,9,.35)}
+.lbl{width:190px;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:30px}
+.lbl small{display:block;font-family:Montserrat;font-style:normal;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#8a7d6c;margin-top:4px}
+a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
+/* 1 Champagner */
+.v1{padding:15px 30px;border-radius:40px;background:#f6f1ea;color:#3b342c;box-shadow:0 6px 18px rgba(47,42,37,.1),inset 0 0 0 1px rgba(187,133,9,.35)}
+.v1.o{background:transparent;box-shadow:inset 0 0 0 1px rgba(59,52,44,.3)}
+/* 2 Kante mit Pfeil */
+.v2{padding:16px 22px 16px 26px;border-radius:6px;background:#3b342c;color:#fff;gap:18px}
+.v2 .ar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.v2.o{background:transparent;color:#3b342c;box-shadow:inset 0 0 0 1px #3b342c}.v2.o .ar{background:rgba(59,52,44,.08)}
+/* 3 Nude */
+.v3{padding:15px 32px;border-radius:40px;background:#b5978a;color:#fff;box-shadow:0 8px 20px rgba(140,110,98,.3)}
+.v3.o{background:transparent;color:#8c6e62;box-shadow:inset 0 0 0 1px #b5978a}
+/* 4 aktuell */
+.v4{padding:15px 32px;border-radius:40px;background:#3b342c;color:#fff;box-shadow:0 8px 20px rgba(47,42,37,.18)}
+.v4.o{background:transparent;color:#3b342c;box-shadow:inset 0 0 0 1px rgba(59,52,44,.35)}
+
+a{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,background .3s}
+a:not(.o)::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:sh 4s ease-in-out infinite}
+.v1::after{background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent)!important}
+@keyframes sh{0%,65%{left:-60%}100%{left:130%}}
+a:hover{transform:translateY(-3px)}
+.v1:hover{box-shadow:0 12px 26px rgba(47,42,37,.16),inset 0 0 0 1px rgba(187,133,9,.6)}
+.v2:hover .ar{transform:translateX(4px)}.v2 .ar{transition:transform .3s}
+.v2:not(.o):hover{background:#4a4137}
+.v3:not(.o):hover{background:#a88a7d;box-shadow:0 12px 26px rgba(140,110,98,.38)}
+.o:hover{background:rgba(255,255,255,.5)}
+h1{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:34px;margin:10px 0 0}
+p.hint{font-size:13px;color:#8a7d6c;margin:6px 0 10px}
+</style></head><body><h1>Варианты кнопок</h1><p class="hint">Наведите мышку или нажмите на кнопку, чтобы увидеть эффект.</p>
+<div class="row"><div class="lbl">Вариант 1<small>Шампань, светлые</small></div><a class="v1" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Jetzt buchen</a><a class="v1 o" href="#">Mehr erfahren</a></div>
+<div class="row"><div class="lbl">Вариант 2<small>Строгие, со стрелкой</small></div><a class="v2" href="#">Jetzt buchen<span class="ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a><a class="v2 o" href="#">Mehr erfahren<span class="ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
+<div class="row"><div class="lbl">Вариант 3<small>Нюдовые, пудровые</small></div><a class="v3" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Jetzt buchen</a><a class="v3 o" href="#">Mehr erfahren</a></div>
+<div class="row" style="border:0;opacity:.75"><div class="lbl">Сейчас<small>Тёмные, эспрессо</small></div><a class="v4" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Jetzt buchen</a><a class="v4 o" href="#">Mehr erfahren</a></div>
+</body></html>
