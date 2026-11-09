@@ -1,9 +1,11 @@
 // Google Ads: misst, ob jemand nach einem Anzeigenklick Kontakt aufnimmt
 // (WhatsApp, Telefon oder Kontaktformular). Konto «erika's», Google-Tag AW-11349567712.
+// Google Analytics 4: Property «erika», Mess-ID G-QXTBLXY6K0 (Website-Besuche).
 window.dataLayer = window.dataLayer || [];
 function gtag() { dataLayer.push(arguments); }
 gtag('js', new Date());
 gtag('config', 'AW-11349567712');
+gtag('config', 'G-QXTBLXY6K0');
 
 (() => {
   const labels = {
