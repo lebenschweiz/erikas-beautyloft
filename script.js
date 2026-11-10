@@ -16,8 +16,6 @@ document.querySelectorAll('.mobile-nav a').forEach(a => a.addEventListener('clic
 // Studio-Fotos: laufen ständig langsam durch wie im Original, Pfeile springen weiter
 const track = document.querySelector('.studio .track');
 if (track) {
-  // Bilder verdoppeln, damit das Band endlos weiterläuft
-  [...track.children].forEach(img => track.appendChild(img.cloneNode(true)));
   const speed = 120; // Pixel pro Sekunde
   let paused = false, last = performance.now(), pos = 0;
   const half = () => track.scrollWidth / 2;
@@ -30,7 +28,18 @@ if (track) {
     }
     requestAnimationFrame(tick);
   };
-  requestAnimationFrame(tick);
+  // Erst starten, wenn das Band in die Nähe kommt: geklonte Bilder würden sonst sofort alle Fotos laden
+  let started = false;
+  const start = () => {
+    if (started) return; started = true;
+    // Bilder verdoppeln, damit das Band endlos weiterläuft
+    [...track.children].forEach(img => track.appendChild(img.cloneNode(true)));
+    last = performance.now(); requestAnimationFrame(tick);
+  };
+  if ('IntersectionObserver' in window) {
+    const so = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { start(); so.disconnect(); } }, { rootMargin: '600px 0px' });
+    so.observe(track);
+  } else start();
   track.addEventListener('mouseenter', () => paused = true);
   track.addEventListener('mouseleave', () => { paused = false; pos = track.scrollLeft; });
   track.addEventListener('touchstart', () => paused = true, { passive: true });
@@ -339,4 +348,15 @@ document.querySelectorAll('.leistungen .media').forEach(m => {
     els.forEach(el => { el.hidden = false; el.className = 'open-status ' + (open ? 'is-open' : 'is-closed'); el.textContent = open ? T('Jetzt geöffnet') : T('Geschlossen'); });
   };
   update(); setInterval(update, 60000);
+})();
+
+// Leistungen-Video erst laden und abspielen, wenn es in die Nähe des Bildschirms kommt
+(() => {
+  const vids = document.querySelectorAll('video[data-autoplay]'); if (!vids.length) return;
+  if (!('IntersectionObserver' in window)) { vids.forEach(v => { v.preload = 'auto'; v.play().catch(() => {}); }); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) v.play().catch(() => {}); else if (!v.paused) v.pause();
+  }), { rootMargin: '300px 0px' });
+  vids.forEach(v => io.observe(v));
 })();

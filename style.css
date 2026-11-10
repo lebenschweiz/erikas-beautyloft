@@ -1489,3 +1489,6 @@ img[data-zoom] { cursor: zoom-in; }
 .form-note.ok { color: #2e6b3a; }
 .form-note.err { color: #a33a2c; }
 .form-note a { color: inherit; text-decoration: underline; }
+
+/* Bilder mit width/height-Angabe behalten ihr Seitenverhältnis (verhindert Layout-Springen) */
+:where(img[width][height]) { height: auto; }

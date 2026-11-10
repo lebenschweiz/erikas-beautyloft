@@ -63,6 +63,14 @@ def add_switcher(s, page, cur):
     return s.replace('</head>', alts + '</head>', 1)
 
 
+def set_urls(s, page, lang):
+    """Canonical und og:url zeigen auf genau diese Seite in dieser Sprache."""
+    url = BASE + ('' if lang == 'de' else lang + '/') + ('' if page == 'index.html' else page)
+    s = re.sub(r'<link rel="canonical"[^>]*>\n?', '', s)
+    s = re.sub(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">', s, count=1)
+    return s.replace('</head>', f'<link rel="canonical" href="{url}">\n</head>', 1)
+
+
 def fix_path(v):
     if re.match(r'(https?:|mailto:|tel:|#|data:|\.\./|/)', v) or v.endswith('.html') or '.html#' in v or '.html?' in v:
         return v
@@ -83,13 +91,12 @@ def translate_wa(url, m, missing):
 
 def build(page, lang, m, missing):
     s = open(page, encoding='utf-8').read()
-    s = add_switcher(s, page, 'de')
+    s = set_urls(add_switcher(s, page, 'de'), page, 'de')
     open(page, 'w', encoding='utf-8').write(s)  # DE bekommt den Umschalter auch
 
-    s = add_switcher(s, page, lang)
+    s = set_urls(add_switcher(s, page, lang), page, lang)
     s = s.replace('<html lang="de">', f'<html lang="{lang}">', 1)
     s = s.replace('content="de_CH"', f'content="{LANGS[lang][1]}"')
-    s = s.replace(f'content="{BASE}"', f'content="{BASE}{lang}/"')
     s = s.replace('aria-label="Sprache"', 'aria-label="Language"' if lang == 'en' else 'aria-label="Язык"')
 
     parts = re.split(r'(<script\b.*?</script>|<style\b.*?</style>|<!--.*?-->|<[^>]+>)', s, flags=re.S)
