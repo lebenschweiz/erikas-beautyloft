@@ -2,7 +2,9 @@
 // Google Ads: misst, ob jemand nach einem Anzeigenklick Kontakt aufnimmt
 // (WhatsApp, Telefon oder Kontaktformular). Konto «erika's», Google-Tag AW-11349567712.
 // Google Analytics 4: Property «erika», Mess-ID G-QXTBLXY6K0 (Website-Besuche).
-// Google wird erst geladen, wenn die Besucherin im Cookie-Hinweis «Akzeptieren» wählt.
+// Meta Pixel: Datensatz «Erika's Beauty Loft Business Manager», ID 546028471841414
+// (PageView, Contact bei WhatsApp/Telefon, Lead bei Kontaktformular).
+// Google und Meta werden erst geladen, wenn die Besucherin im Cookie-Hinweis «Akzeptieren» wählt.
 // Die Wahl wird im Browser gespeichert (localStorage «cookie-consent», 12 Monate);
 // über «Cookie-Einstellungen» im Seitenfuss kann sie jederzeit geändert werden.
 window.dataLayer = window.dataLayer || [];
@@ -21,17 +23,17 @@ gtag('config', 'G-QXTBLXY6K0');
   const MAX_AGE = 365 * 24 * 3600 * 1000;
   const TEXT = {
     de: {
-      msg: 'Wir verwenden Cookies von Google Analytics und Google Ads, um zu verstehen, wie unsere Website genutzt wird, und um unsere Werbung zu messen. Sie entscheiden, ob Sie zustimmen.',
+      msg: 'Wir verwenden Cookies von Google Analytics, Google Ads und Meta (Facebook/Instagram), um zu verstehen, wie unsere Website genutzt wird, und um unsere Werbung zu messen. Sie entscheiden, ob Sie zustimmen.',
       more: 'Mehr in der Datenschutzerklärung', yes: 'Akzeptieren', no: 'Ablehnen',
       settings: 'Cookie-Einstellungen', aria: 'Cookie-Hinweis'
     },
     en: {
-      msg: 'We use cookies from Google Analytics and Google Ads to understand how our website is used and to measure our advertising. You decide whether you agree.',
+      msg: 'We use cookies from Google Analytics, Google Ads and Meta (Facebook/Instagram) to understand how our website is used and to measure our advertising. You decide whether you agree.',
       more: 'More in the privacy policy', yes: 'Accept', no: 'Decline',
       settings: 'Cookie settings', aria: 'Cookie notice'
     },
     ru: {
-      msg: 'Мы используем файлы cookie Google Analytics и Google Ads, чтобы понимать, как используется наш сайт, и оценивать эффективность рекламы. Вы сами решаете, согласиться ли.',
+      msg: 'Мы используем файлы cookie Google Analytics, Google Ads и Meta (Facebook/Instagram), чтобы понимать, как используется наш сайт, и оценивать эффективность рекламы. Вы сами решаете, согласиться ли.',
       more: 'Подробнее в политике конфиденциальности', yes: 'Принять', no: 'Отклонить',
       settings: 'Настройки cookie', aria: 'Уведомление о cookie'
     }
@@ -66,6 +68,19 @@ gtag('config', 'G-QXTBLXY6K0');
     s.async = true;
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-QXTBLXY6K0';
     document.head.appendChild(s);
+    loadMeta();
+  };
+
+  const loadMeta = () => {
+    /* eslint-disable */
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    /* eslint-enable */
+    fbq('init', '546028471841414');
+    fbq('track', 'PageView');
   };
 
   // Conversions werden nur gesendet, wenn zugestimmt wurde (sonst bleibt Google ungeladen)
@@ -75,7 +90,9 @@ gtag('config', 'G-QXTBLXY6K0');
     formular: 'AW-11349567712/ttfMCNyAoLUdEODR8qMq'  // Kontaktformular gesendet (Website)
   };
   window.adsConversion = art => {
-    if (loaded && labels[art]) gtag('event', 'conversion', { send_to: labels[art], transport_type: 'beacon' });
+    if (!loaded || !labels[art]) return;
+    gtag('event', 'conversion', { send_to: labels[art], transport_type: 'beacon' });
+    if (window.fbq) fbq('track', art === 'formular' ? 'Lead' : 'Contact', { content_name: art });
   };
   document.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href]');
@@ -93,7 +110,7 @@ gtag('config', 'G-QXTBLXY6K0');
   const removeGoogleCookies = () => {
     const host = location.hostname.replace(/^www\./, '');
     document.cookie.split(';').map(c => c.split('=')[0].trim())
-      .filter(n => /^(_ga|_gid|_gcl|_gac)/.test(n))
+      .filter(n => /^(_ga|_gid|_gcl|_gac|_fbp|_fbc)/.test(n))
       .forEach(n => ['', '; domain=' + host, '; domain=.' + host].forEach(d => {
         document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
       }));
