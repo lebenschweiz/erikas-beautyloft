@@ -117,6 +117,7 @@ document.querySelectorAll('form[data-mail]').forEach(form => {
     // FormSubmit antwortet oft langsam: nach kurzer Zeit schon danken, Versand läuft weiter (keepalive)
     let shown = false;
     const timer = setTimeout(() => { shown = true; thanks(); }, 1500);
+    if (window.adsConversion) adsConversion('formular'); // Google Ads + Meta (nur mit Cookie-Zustimmung)
     fetch('https://formsubmit.co/ajax/83d63466e1501305149e42d0325545d1', {
       method: 'POST',
       keepalive: true,
