@@ -81,6 +81,36 @@ document.querySelectorAll('.galerie-grid .vid').forEach(box => {
   });
 });
 
+// Herkunft des Besuchs (nur für die Formular-E-Mail): Google Ads, Meta, Google-Suche usw.
+// Wird beim ersten Seitenaufruf im Tab bestimmt und nur in diesem Tab gespeichert (sessionStorage),
+// kein Cookie, nichts wird an Dritte gesendet ausser mit der Anfrage selbst an info@.
+const visitSource = (() => {
+  const KEY = 'besuch-quelle';
+  try { const v = sessionStorage.getItem(KEY); if (v) return v; } catch (e) { /* kein Speicher */ }
+  const q = new URLSearchParams(location.search);
+  const get = k => (q.get(k) || '').toLowerCase();
+  const src = get('utm_source'), med = get('utm_medium'), camp = q.get('utm_campaign') || '';
+  let ref = '';
+  try { ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch (e) { /* ignorieren */ }
+  if (ref.endsWith('erikas-beautyloft.ch')) ref = '';
+  const metaSrc = /^(fb|ig|facebook|instagram|meta|an|msg)$/.test(src) || /facebook|instagram/.test(src);
+  const paid = /paid|cpc|ppc|ads?$|^ad/.test(med);
+  let label;
+  if (q.has('gclid') || q.has('gbraid') || q.has('wbraid') || (/google/.test(src) && paid)) label = 'Google Ads (Anzeigenklick)';
+  else if (metaSrc && paid) label = 'Meta-Werbung (Facebook/Instagram)';
+  else if (q.has('fbclid') || metaSrc) label = 'Facebook/Instagram (Werbung oder Beitrag, nicht unterscheidbar)';
+  else if (src) label = 'Link mit Kennzeichnung: ' + src + (med ? ' / ' + med : '');
+  else if (/(^|\.)google\./.test(ref)) label = 'Google-Suche (ohne Werbung) oder Google Maps';
+  else if (/bing\.|duckduckgo\.|yahoo\.|ecosia\./.test(ref)) label = 'Andere Suchmaschine (' + ref + ')';
+  else if (/facebook\.|instagram\.|fb\.me/.test(ref)) label = 'Facebook/Instagram (Werbung oder Beitrag, nicht unterscheidbar)';
+  else if (ref) label = 'Andere Website: ' + ref;
+  else label = 'Direkt (Adresse eingetippt, Lesezeichen, WhatsApp-Link o. ä.)';
+  if (camp) label += ' – Kampagne: ' + camp;
+  label += ' – Einstieg: ' + location.pathname;
+  try { sessionStorage.setItem(KEY, label); } catch (e) { /* ignorieren */ }
+  return label;
+})();
+
 // Formulare senden die Anfrage direkt an info@ (über FormSubmit), ohne E-Mail-Programm
 document.querySelectorAll('form[data-mail]').forEach(form => {
   const btn = form.querySelector('button[type="submit"]');
@@ -96,6 +126,7 @@ document.querySelectorAll('form[data-mail]').forEach(form => {
     for (const [k, v] of data) if (v && k !== 'website') payload[k] = v;
     if (payload.email) payload._replyto = payload.email;
     payload.sprache = document.documentElement.lang;
+    payload.quelle = visitSource;
     btn.disabled = true;
     const label = btn.textContent;
     btn.textContent = T('Wird gesendet …');
